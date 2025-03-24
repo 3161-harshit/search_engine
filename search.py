@@ -4,19 +4,17 @@ import pandas as pd
 import os
 from train_search_history import load_search_history, get_related_searches, process_search, train_fasttext_model
 
-# Constants
 GOOGLE_SEARCH_API_KEY = "AIzaSyD30IVyVndnxcAPuGIsVWySTvkEovj_PzM"
 SEARCH_ENGINE_ID = "810a40fa74b054e3c"
 IMAGE_PATH = "L:\\search_engine\\image.png"
 
-# Function to get Google search results
 def get_google_search_results(query):
     url = f"https://www.googleapis.com/customsearch/v1?q={query}&key={GOOGLE_SEARCH_API_KEY}&cx={SEARCH_ENGINE_ID}"
     try:
         response = requests.get(url).json()
         search_results = []
         if "items" in response:
-            for item in response["items"][:10]:  # Limit to top 10 results
+            for item in response["items"][:10]: 
                 search_results.append({
                     "title": item.get("title", "No Title"),
                     "link": item.get("link", "#"),
@@ -26,10 +24,8 @@ def get_google_search_results(query):
     except Exception as e:
         return [{"title": f"❌ API Error: {str(e)}", "link": "#", "snippet": ""}]
 
-# UI Design
 st.set_page_config(page_title="HFS Search Engine", layout="wide")
 
-# Custom Styling
 st.markdown(
     """
     <style>
@@ -87,20 +83,16 @@ st.markdown(
     unsafe_allow_html=True
 )
 
-# Display Image in Center
 st.markdown("<div class='image-container'>", unsafe_allow_html=True)
 st.image(IMAGE_PATH, width=600, use_container_width=False)
 st.markdown("</div>", unsafe_allow_html=True)
 
 st.markdown("<h1>🚀 HFS Search Engine</h1>", unsafe_allow_html=True)
 
-# Load previous searches
 search_history = load_search_history()
 
-# Search Input with Centered Box
 search_query = st.text_input("🔍 Search here...", key="search_input")
 
-# Auto-Suggestions from History
 if search_query:
     suggestions = get_related_searches(search_query, search_history, train_fasttext_model())
     if suggestions:
@@ -108,7 +100,6 @@ if search_query:
         if st.button("Use Selected Query"):
             search_query = selected_query
 
-# Search Button
 if st.button("Search", key="search_button"):
     if search_query.strip():
         st.write(f"🔍 Searching for: **{search_query}**")
